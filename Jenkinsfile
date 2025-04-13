@@ -1,29 +1,33 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'node:20.15.0-alpine'  // Use the exact name you set up in Global Tool Configuration.
+    }
     stages {
-    
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         stage('Install Dependencies') {
             steps {
-                // Installs node modules
                 sh 'npm install'
             }
         }
         stage('Build') {
             steps {
-                // Builds the React app; output goes to the build folder
                 sh 'npm run build'
             }
         }
         stage('Test') {
             steps {
-                // Runs tests; using --watchAll=false to prevent hanging in watch mode
+                // Running tests with the --watchAll=false option
                 sh 'npm test -- --watchAll=false'
             }
         }
     }
     post {
         always {
-            // Cleans the workspace after the pipeline run
             cleanWs()
         }
     }
